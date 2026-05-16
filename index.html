@@ -2,20 +2,419 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-
-<title>炎上DB</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>炎上情報データベース</title>
 <meta name="robots" content="noindex,nofollow">
 
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#0b0b0b;
+    color:#f1f1f1;
+    font-family:"Segoe UI",sans-serif;
+    line-height:1.6;
+}
+
+a{
+    color:#ff5a5a;
+    text-decoration:none;
+}
+
+header{
+    background:linear-gradient(90deg,#111,#220000);
+    padding:20px;
+    border-bottom:2px solid #ff1a1a;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:2rem;
+    color:#ff2a2a;
+    font-weight:bold;
+    letter-spacing:2px;
+    text-shadow:0 0 12px rgba(255,0,0,0.6);
+}
+
+.sub{
+    color:#888;
+    margin-top:5px;
+    font-size:0.9rem;
+}
+
+.container{
+    width:95%;
+    max-width:1400px;
+    margin:auto;
+    padding:20px 0;
+}
+
+.alert{
+    background:#220000;
+    border:1px solid #660000;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    color:#ff9999;
+}
+
+.search-box{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.search-box input{
+    flex:1;
+    padding:14px;
+    border:none;
+    background:#111;
+    color:white;
+    border-radius:8px;
+    border:1px solid #333;
+}
+
+.search-box button{
+    background:#ff1a1a;
+    color:white;
+    border:none;
+    padding:14px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.search-box button:hover{
+    background:#ff3333;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:#111;
+    border:1px solid #222;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 0 20px rgba(255,0,0,0.05);
+}
+
+.card h2{
+    margin-bottom:20px;
+    color:#ff4d4d;
+}
+
+.article{
+    display:flex;
+    gap:15px;
+    padding:15px 0;
+    border-bottom:1px solid #222;
+    transition:0.3s;
+}
+
+.article:hover{
+    background:#161616;
+}
+
+.thumb{
+    width:140px;
+    height:85px;
+    border-radius:10px;
+    overflow:hidden;
+    flex-shrink:0;
+    border:1px solid #333;
+}
+
+.thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.article-content{
+    flex:1;
+}
+
+.article-title{
+    font-size:1.1rem;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.meta{
+    color:#888;
+    font-size:0.85rem;
+    margin-bottom:8px;
+}
+
+.tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+}
+
+.tag{
+    background:#2a0000;
+    color:#ff6666;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:0.75rem;
+}
+
+.rank-item{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid #222;
+    padding:12px 0;
+}
+
+.rank-num{
+    color:#ff2a2a;
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.category-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.category{
+    background:#1b1b1b;
+    border:1px solid #333;
+    padding:10px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.category:hover{
+    border-color:#ff1a1a;
+    color:#ff6666;
+}
+
+.footer{
+    text-align:center;
+    color:#777;
+    padding:40px 0;
+}
+
+@media(max-width:900px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .article{
+        flex-direction:column;
+    }
+
+    .thumb{
+        width:100%;
+        height:180px;
+    }
+
+    .search-box{
+        flex-direction:column;
+    }
+
+}
+</style>
 </head>
 
 <body>
 
-<h1>炎上DB</h1>
+<header>
+    <div class="logo">ENJO DATABASE</div>
+    <div class="sub">リアルタイム炎上・騒動アーカイブ</div>
+</header>
 
-<ul>
-<li><a href="article1.html">テスト記事</a></li>
-</ul>
+<div class="container">
+
+    <div class="alert">
+        ⚠ このサイトは公開情報・報道・SNS上の話題を整理したデータベースです。
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="炎上ワードを検索...">
+        <button onclick="searchArticles()">検索</button>
+    </div>
+
+    <div class="grid">
+
+        <main>
+
+            <div class="card">
+
+                <h2>最新炎上一覧</h2>
+
+                <div class="article">
+
+                    <div class="thumb">
+                        <img src="https://picsum.photos/300/180?random=1">
+                    </div>
+
+                    <div class="article-content">
+
+                        <div class="article-title">
+                            <a href="#">某配信者の不適切発言が拡散</a>
+                        </div>
+
+                        <div class="meta">
+                            2026-05-16 / SNS炎上
+                        </div>
+
+                        <div class="tags">
+                            <span class="tag">配信者</span>
+                            <span class="tag">炎上</span>
+                            <span class="tag">SNS</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="article">
+
+                    <div class="thumb">
+                        <img src="https://picsum.photos/300/180?random=2">
+                    </div>
+
+                    <div class="article-content">
+
+                        <div class="article-title">
+                            <a href="#">企業公式アカウントの誤投稿問題</a>
+                        </div>
+
+                        <div class="meta">
+                            2026-05-15 / 企業炎上
+                        </div>
+
+                        <div class="tags">
+                            <span class="tag">企業</span>
+                            <span class="tag">誤投稿</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="article">
+
+                    <div class="thumb">
+                        <img src="https://picsum.photos/300/180?random=3">
+                    </div>
+
+                    <div class="article-content">
+
+                        <div class="article-title">
+                            <a href="#">人気VTuberの契約解除騒動</a>
+                        </div>
+
+                        <div class="meta">
+                            2026-05-14 / VTuber
+                        </div>
+
+                        <div class="tags">
+                            <span class="tag">VTuber</span>
+                            <span class="tag">契約解除</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        <aside>
+
+            <div class="card">
+
+                <h2>急上昇ランキング</h2>
+
+                <div class="rank-item">
+                    <div><span class="rank-num">1</span>某配信者騒動</div>
+                    <div>🔥982</div>
+                </div>
+
+                <div class="rank-item">
+                    <div><span class="rank-num">2</span>企業誤投稿問題</div>
+                    <div>🔥731</div>
+                </div>
+
+                <div class="rank-item">
+                    <div><span class="rank-num">3</span>VTuber契約解除</div>
+                    <div>🔥502</div>
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2>カテゴリ</h2>
+
+                <div class="category-list">
+                    <div class="category">企業</div>
+                    <div class="category">配信者</div>
+                    <div class="category">VTuber</div>
+                    <div class="category">YouTube</div>
+                    <div class="category">芸能</div>
+                    <div class="category">SNS</div>
+                    <div class="category">情報漏洩</div>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+<div class="footer">
+    © 2026 ENJO DATABASE
+</div>
+
+<script>
+function searchArticles(){
+
+    const keyword = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const articles = document.querySelectorAll(".article");
+
+    articles.forEach(article => {
+
+        const text = article.innerText.toLowerCase();
+
+        if(text.includes(keyword)){
+            article.style.display = "flex";
+        }else{
+            article.style.display = "none";
+        }
+
+    });
+
+}
+</script>
 
 </body>
 </html>
